@@ -69,7 +69,7 @@ resource "aws_route_table" "private" {
 
   route = [{
     cidr_block                 = "0.0.0.0/0"
-    gateway_id                 = aws_nat_gateway.this.id
+    gateway_id                 = null
     carrier_gateway_id         = null
     core_network_arn           = null
     destination_prefix_list_id = null
@@ -77,7 +77,7 @@ resource "aws_route_table" "private" {
     instance_id                = null
     ipv6_cidr_block            = null
     local_gateway_id           = null
-    nat_gateway_id             = null
+    nat_gateway_id             = aws_nat_gateway.nat.id
     network_interface_id       = null
     transit_gateway_id         = null
     vpc_endpoint_id            = null
@@ -102,6 +102,18 @@ resource "aws_internet_gateway" "public" {
     Name      = "Main Internet Gateway"
     ManagedBy = "Terraform"
   }
+}
+
+resource "aws_nat_gateway" "nat" {
+  allocation_id = aws_eip.nat.id
+  subnet_id     = aws_subnet.public.id
+
+  tags = {
+    Name      = "NAT Gateway"
+    ManagedBy = "Terraform"
+  }
+
+  depends_on = [aws_internet_gateway.public]
 }
 
 resource "aws_eip" "nat" {
