@@ -8,6 +8,11 @@ locals {
   instance_type = "t2.micro"
 }
 
+variable "jupyter_pass" {
+    type = string
+    description = "Jupyter pass"
+}
+
 resource "aws_eip" "jupyter" {
   instance = aws_instance.jupyter.id
 }
@@ -33,7 +38,7 @@ resource "aws_instance" "jupyter" {
   provisioner "remote-exec" {
     inline = [
       "chmod +x /tmp/init_jupyter.bash",
-      "sudo /tmp/init_jupyter.bash",
+      "sudo /tmp/init_jupyter.bash ${var.jupyter_pass}",
     ]
   }
 }
@@ -76,4 +81,8 @@ resource "aws_security_group" "allow_http_ssh" {
   tags = {
     Name = "allow_http_ssh"
   }
+}
+
+output "jupyter_url" {
+    value = "http://${aws_eip.jupyter.public_ip}"
 }

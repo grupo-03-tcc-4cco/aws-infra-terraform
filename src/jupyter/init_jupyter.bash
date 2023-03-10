@@ -1,4 +1,5 @@
 #!/bin/bash -xe
+echo "Jupyter pass: " $1
 amazon-linux-extras install java-openjdk11 -y
 curl -O https://archive.apache.org/dist/spark/spark-3.3.2/spark-3.3.2-bin-hadoop3.tgz
 tar xzf spark-3.3.2-bin-hadoop3.tgz -C /usr/local --owner root --group root --no-same-owner
@@ -21,7 +22,7 @@ mkdir /opt/jupyter/notebook
 mkdir /opt/jupyter/script
 touch /opt/jupyter/script/start.sh
 echo '#!/bin/bash' >> /opt/jupyter/script/start.sh
-echo '/usr/bin/python3 -m notebook --NotebookApp.notebook_dir=/opt/jupyter/notebook --NotebookApp.password=$(/usr/bin/python3 -c "from notebook.auth import passwd; print(passwd(\"urubu100\"))")  --allow-root --ip 0.0.0.0 --port 80' >> /opt/jupyter/script/start.sh
+echo '/usr/bin/python3 -m notebook --NotebookApp.notebook_dir=/opt/jupyter/notebook --NotebookApp.password=$(/usr/bin/python3 -c "from notebook.auth import passwd; print(passwd(\"'${1}'\"))")  --allow-root --ip 0.0.0.0 --port 80' >> /opt/jupyter/script/start.sh
 chmod +x /opt/jupyter/script/start.sh
 systemctl daemon-reload
 systemctl start jupyter
