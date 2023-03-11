@@ -9,8 +9,8 @@ locals {
 }
 
 variable "jupyter_pass" {
-    type = string
-    description = "Jupyter pass"
+  type        = string
+  description = "Jupyter pass"
 }
 
 resource "aws_eip" "jupyter" {
@@ -18,8 +18,10 @@ resource "aws_eip" "jupyter" {
 }
 
 resource "aws_instance" "jupyter" {
-  ami           = local.ami
-  instance_type = local.instance_type
+  ami                    = local.ami
+  instance_type          = local.instance_type
+  vpc_security_group_ids = [aws_security_group.allow_http_ssh.id]
+  iam_instance_profile   = aws_iam_instance_profile.ec2_profile.name
 
   key_name = "terraform_key"
 
@@ -41,11 +43,6 @@ resource "aws_instance" "jupyter" {
       "sudo /tmp/init_jupyter.bash ${var.jupyter_pass}",
     ]
   }
-}
-
-resource "aws_network_interface_sg_attachment" "sg_attachment" {
-  security_group_id    = aws_security_group.allow_http_ssh.id
-  network_interface_id = aws_instance.jupyter.primary_network_interface_id
 }
 
 resource "aws_security_group" "allow_http_ssh" {
@@ -83,6 +80,15 @@ resource "aws_security_group" "allow_http_ssh" {
   }
 }
 
+resource "aws_s3_bucket" "raw-input" {
+  bucket = "raw-input-gtakeout-files-group-3-tcc-01"
+}
+
+resource "aws_iam_instance_profile" "ec2_profile" {
+  name = "ec2_profile"
+  role = "LabRole"
+}
+
 output "jupyter_url" {
-    value = "http://${aws_eip.jupyter.public_ip}"
+  value = "http://${aws_eip.jupyter.public_ip}"
 }
