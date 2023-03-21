@@ -25,16 +25,16 @@ resource "aws_instance" "jupyter" {
 
   key_name = "terraform_key"
 
-  provisioner "file" {
-    source      = "./init_jupyter.bash"
-    destination = "/tmp/init_jupyter.bash"
-  }
-
   connection {
     type        = "ssh"
     user        = "ec2-user"
     private_key = file("../../terraform_key.pem")
     host        = self.public_ip
+  }
+
+  provisioner "file" {
+    source      = "./init_jupyter.bash"
+    destination = "/tmp/init_jupyter.bash"
   }
 
   provisioner "remote-exec" {

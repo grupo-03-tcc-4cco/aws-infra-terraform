@@ -7,6 +7,8 @@ rm -rf spark-3.3.2-bin-hadoop3.tgz
 mv /usr/local/spark-3.3.2-bin-hadoop3 /usr/local/spark
 pip3 install pyspark --no-cache-dir
 pip3 install jupyterlab --no-cache-dir
+pip3 install google-api-python-client --no-cache-dir
+pip3 install pandas --no-cache-dir
 touch /lib/systemd/system/jupyter.service
 echo "[Unit]" >> /lib/systemd/system/jupyter.service
 echo "Description=Jupyter Notebook" >> /lib/systemd/system/jupyter.service
