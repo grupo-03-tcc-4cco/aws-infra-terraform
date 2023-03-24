@@ -113,7 +113,10 @@ resource "aws_nat_gateway" "nat" {
     ManagedBy = "Terraform"
   }
 
-  depends_on = [aws_internet_gateway.public]
+  depends_on = [
+    aws_internet_gateway.public,
+    aws_subnet.public
+  ]
 }
 
 resource "aws_eip" "nat" {

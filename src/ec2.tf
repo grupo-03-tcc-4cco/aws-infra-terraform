@@ -1,6 +1,6 @@
 locals {
     ami = "ami-005f9685cb30f234b"
-    instance_type = "t3.micro"
+    instance_type = "t2.micro"
 }
 
 resource "aws_instance" "web_page" {
@@ -8,6 +8,9 @@ resource "aws_instance" "web_page" {
   instance_type = local.instance_type
   
   subnet_id   = aws_subnet.public.id
+  depends_on = [
+    aws_subnet.public
+  ]
 }
 
 resource "aws_instance" "backend" {
@@ -15,6 +18,9 @@ resource "aws_instance" "backend" {
     instance_type = local.instance_type
 
     subnet_id   = aws_subnet.public.id
+    depends_on = [
+      aws_subnet.public
+    ] 
 }
 
 resource "aws_instance" "database" {
@@ -22,6 +28,9 @@ resource "aws_instance" "database" {
     instance_type = local.instance_type
 
     subnet_id = aws_subnet.private.id
+    depends_on = [
+      aws_subnet.private
+    ] 
 }
 
 resource "aws_instance" "jupyter" {
@@ -29,6 +38,9 @@ resource "aws_instance" "jupyter" {
   instance_type = local.instance_type
   
   subnet_id   = aws_subnet.public.id
+  depends_on = [
+    aws_subnet.public
+  ]
 }
 
 resource "aws_eip" "jupyter" {
